@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'caankitgupta777@gmail.com' ||
+        request.auth.token.email == 'admin@munimai.in'
+      );
+    }
+
+    // Validation for query history records
+    function isValidQueryRecord(data, queryId) {
+      return data.keys().hasAll(['id', 'userId', 'queryType', 'title', 'queryText', 'createdAt', 'status'])
+        && data.keys().hasOnly(['id', 'userId', 'queryType', 'title', 'queryText', 'resultSummary', 'payload', 'createdAt', 'status', 'tags'])
+        && data.id is string
+        && data.id == queryId
+        && isValidId(data.id)
+        && data.userId is string
+        && data.userId == request.auth.uid
+        && data.queryType in ['advisor', 'voucher', 'ocr_scan', 'gst_calc', 'setoff', 'financials']
+        && data.status in ['completed', 'failed']
+        && data.title is string && data.title.size() <= 500
+        && data.queryText is string && data.queryText.size() <= 20000
+        && data.createdAt is string && data.createdAt.size() <= 60
+        && (!('resultSummary' in data) || (data.resultSummary is string && data.resultSummary.size() <= 20000))
+        && (!('tags' in data) || (data.tags is list && data.tags.size() <= 20));
+    }
+
+    // Validation for multi-company records
+    function isValidCompany(data, companyId) {
+      return data.keys().hasAll(['id', 'userId', 'name', 'legalConstitution', 'state', 'currentFY', 'createdAt'])
+        && data.id is string
+        && data.id == companyId
+        && isValidId(data.id)
+        && data.userId is string
+        && data.userId == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.legalConstitution is string && data.legalConstitution.size() <= 100
+        && data.state is string && data.state.size() <= 100
+        && data.currentFY is string && data.currentFY.size() <= 20
+        && data.createdAt is string && data.createdAt.size() <= 60
+        && (!('gstin' in data) || (data.gstin is string && data.gstin.size() <= 20))
+        && (!('pan' in data) || (data.pan is string && data.pan.size() <= 15))
+        && (!('stateCode' in data) || (data.stateCode is string && data.stateCode.size() <= 5))
+        && (!('isGstRegistered' in data) || data.isGstRegistered is bool)
+        && (!('accountingBasis' in data) || (data.accountingBasis is string && data.accountingBasis.size() <= 50))
+        && (!('turnoverBracket' in data) || (data.turnoverBracket is string && data.turnoverBracket.size() <= 50))
+        && (!('supportedFYs' in data) || (data.supportedFYs is list && data.supportedFYs.size() <= 10));
+    }
+
+    // Validation for feedback & bug reports
+    function isValidFeedback(data, feedbackId) {
+      return data.keys().hasAll(['id', 'userId', 'type', 'title', 'description', 'createdAt'])
+        && data.id is string
+        && data.id == feedbackId
+        && isValidId(data.id)
+        && data.userId is string
+        && data.userId == request.auth.uid
+        && data.type in ['bug', 'feature', 'rating', 'general', 'accounting_query']
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.description is string && data.description.size() > 0 && data.description.size() <= 4000
+        && data.createdAt is string && data.createdAt.size() <= 60
+        && (!('rating' in data) || (data.rating is number && data.rating >= 1 && data.rating <= 5))
+        && (!('module' in data) || (data.module is string && data.module.size() <= 100))
+        && (!('contactEmail' in data) || (data.contactEmail is string && data.contactEmail.size() <= 150))
+        && (!('userAgent' in data) || (data.userAgent is string && data.userAgent.size() <= 500));
+    }
+
+    // Queries collection: strict per-user isolation
+    match /queries/{queryId} {
+      allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidQueryRecord(request.resource.data, queryId);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid;
+    }
+
+    // Companies collection: strict per-user enterprise isolation
+    match /companies/{companyId} {
+      allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidCompany(request.resource.data, companyId);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid;
+
+      // Subcollections under company (vouchers, tds_register, audit_trail, ledgers, invoices)
+      match /{subcollection}/{docId} {
+        allow read, write: if isAuthenticated() &&
+          get(/databases/$(database)/documents/companies/$(companyId)).data.userId == request.auth.uid;
+      }
+    }
+
+    // Feedback collection: user can submit/view own; admin can view all
+    match /feedback/{feedbackId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && isValidFeedback(request.resource.data, feedbackId);
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

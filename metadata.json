@@ -1,0 +1,8 @@
+{
+  "name": "Indian Double Entry Accounting & Tax Agent",
+  "description": "AI double-entry accounting and Indian tax advisor with camera receipt scanning, Quick GST Calculator by HSN with CGST/SGST/IGST breakdown, draft Ind AS Financials, GST & TDS Tax Calendars, and compliance advisory.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

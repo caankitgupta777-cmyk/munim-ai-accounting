@@ -1,0 +1,187 @@
+{
+  "entities": {
+    "QueryRecord": {
+      "title": "Query Record",
+      "description": "Log of accounting, tax, voucher, and calculation queries executed in the agent",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the query record"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the record owner"
+        },
+        "queryType": {
+          "type": "string",
+          "enum": ["advisor", "voucher", "ocr_scan", "gst_calc", "setoff", "financials"],
+          "description": "Type or module of the query executed"
+        },
+        "title": {
+          "type": "string",
+          "description": "Brief headline or title of the query"
+        },
+        "queryText": {
+          "type": "string",
+          "description": "The exact user prompt, calculation input, or transaction description"
+        },
+        "resultSummary": {
+          "type": "string",
+          "description": "Concise summary of the query result or calculation output"
+        },
+        "payload": {
+          "type": "object",
+          "description": "Structured metadata, computation parameters, debits/credits, or amounts"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp when the query was executed"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["completed", "failed"],
+          "description": "Execution status of the query"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Searchable tags for categorization"
+        }
+      },
+      "required": ["id", "userId", "queryType", "title", "queryText", "createdAt", "status"]
+    },
+    "CompanyMaster": {
+      "title": "Company Master",
+      "description": "Master entity representing an enterprise or legal business entity owned by a user",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique company ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Business or Trade Name"
+        },
+        "legalConstitution": {
+          "type": "string",
+          "description": "Legal structure (Company, LLP, Firm, Proprietorship)"
+        },
+        "gstin": {
+          "type": "string",
+          "description": "15-digit GST Identification Number"
+        },
+        "pan": {
+          "type": "string",
+          "description": "10-digit Income Tax Permanent Account Number"
+        },
+        "state": {
+          "type": "string",
+          "description": "State of registration"
+        },
+        "stateCode": {
+          "type": "string",
+          "description": "2-digit GST state code"
+        },
+        "isGstRegistered": {
+          "type": "boolean",
+          "description": "Whether registered under GST"
+        },
+        "accountingBasis": {
+          "type": "string",
+          "description": "Accrual or Cash basis"
+        },
+        "turnoverBracket": {
+          "type": "string",
+          "description": "Turnover range for statutory thresholds"
+        },
+        "currentFY": {
+          "type": "string",
+          "description": "Active financial year"
+        },
+        "supportedFYs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of financial years"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["id", "userId", "name", "legalConstitution", "state", "currentFY", "createdAt"]
+    },
+    "FeedbackSubmission": {
+      "title": "Feedback Submission",
+      "description": "Beta tester feedback, bug reports, feature suggestions and ratings",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique feedback ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Submitter user UID"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["bug", "feature", "rating", "general", "accounting_query"],
+          "description": "Feedback category"
+        },
+        "module": {
+          "type": "string",
+          "description": "Optional module name (e.g. vouchers, gst, tds)"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Star rating 1 to 5"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or headline"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed remarks or error report"
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "Optional contact email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Client browser telemetry"
+        }
+      },
+      "required": ["id", "userId", "type", "title", "description", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/queries/{queryId}": {
+      "schema": "QueryRecord",
+      "description": "User queries and accounting computation logs"
+    },
+    "/companies/{companyId}": {
+      "schema": "CompanyMaster",
+      "description": "Business entities and company configurations owned by user"
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "FeedbackSubmission",
+      "description": "Beta user feedback, bug reports, and rating submissions"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+services:
+  munim-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: munim-ai-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - APP_URL=${APP_URL:-http://localhost:3000}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) process.exit(1);});"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
