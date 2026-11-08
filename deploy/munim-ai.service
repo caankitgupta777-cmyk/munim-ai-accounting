@@ -1,0 +1,21 @@
+[Unit]
+Description=Munim AI - Indian Double-Entry Accounting & Tax Engine
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/munim-ai
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=munim-ai
+Environment=NODE_ENV=production
+Environment=PORT=3000
+# Load environment file
+EnvironmentFile=/home/ubuntu/munim-ai/.env
+
+[Install]
+WantedBy=multi-user.target

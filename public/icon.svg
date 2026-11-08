@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="50%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background Circle / Squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+
+  <!-- Outer Border Ring -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#34d399" stroke-width="4" stroke-opacity="0.3" />
+
+  <!-- Inner Decorative Elements -->
+  <!-- Ledger Book and Scales Group -->
+  <g transform="translate(64, 64)" filter="url(#shadow)">
+    <!-- Base Ledger Shield -->
+    <path d="M192 36 L320 84 V192 C320 284 264 340 192 372 C120 340 64 284 64 192 V84 Z" fill="#0f172a" fill-opacity="0.4" stroke="#10b981" stroke-width="6" />
+
+    <!-- Rupee Currency Symbol ₹ -->
+    <path d="M136 128 H248 M136 156 H236 M136 128 V240 M136 184 C192 184 212 152 212 140 C212 128 192 128 192 128 M172 184 L244 268" 
+          fill="none" stroke="#34d399" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Double Entry Balance Dots & Check -->
+    <circle cx="96" cy="300" r="14" fill="#34d399" />
+    <circle cx="288" cy="300" r="14" fill="#34d399" />
+    <path d="M96 300 H288" stroke="#34d399" stroke-width="4" stroke-dasharray="8 8" />
+
+    <!-- Tax Spark / Star -->
+    <polygon points="192,20 198,34 212,36 201,46 204,60 192,52 180,60 183,46 172,36 186,34" fill="#fbbf24" />
+  </g>
+</svg>

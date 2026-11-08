@@ -1,0 +1,58 @@
+{
+  "id": "/",
+  "name": "Indian Double Entry Accounting & Tax Agent",
+  "short_name": "Munshi AI",
+  "description": "AI double-entry accounting and Indian tax advisor with camera receipt scanning, Quick GST Calculator by HSN with CGST/SGST/IGST breakdown, draft Ind AS Financials, GST & TDS Tax Calendars, and compliance advisory.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#047857",
+  "theme_color": "#047857",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Munshi AI Accounting and Tax Agent Dashboard"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Munshi AI Double Entry Journal Generator"
+    }
+  ]
+}
